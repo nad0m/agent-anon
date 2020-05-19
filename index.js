@@ -1,3 +1,4 @@
+require("dotenv").config()
 const Discord = require("discord.js")
 const client = new Discord.Client()
 
@@ -43,7 +44,6 @@ client.on("message", msg => {
         globalSession = new Session(true, {}, playerNum, client.channels.cache.get(channelID));
         globalSession.channel.send(colorBlue(newGameText));
         globalSession.channel.send(instructText);
-        console.log({ client });
     }
 
     // During game
@@ -66,6 +66,8 @@ client.on("message", msg => {
         globalSession = new Session(false, {}, 0, client.channels.cache.get(channelID));
     }
 })
+
+client.login(process.env.BOT_TOKEN);
 
 // Utils
 function colorBlue(text) {
@@ -96,4 +98,3 @@ function colorRed(text) {
     return `${startTilde}${text}${endTilde}`;
 }
 
-client.login("NzEyMjA0MjE3OTA5MjQ4MDEw.XsOKIg.XZfdHYum3Z5S1VABjpfz9RlyShs")
