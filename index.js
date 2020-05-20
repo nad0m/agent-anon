@@ -38,25 +38,22 @@ client.on("message", msg => {
 
     // Game ending
     function finalizeGame() {
-        const text = globalSession.isSameTeam() ? colorGreen(`Hooray! You guys are on the same team!!`) : colorRed(`You guys are NOT on the same team.`);
-        const partingText = "Contact <@396131916098568192> or visit https://github.com/nad0m/agent-anon for more bot details and features.";
+        const text = globalSession.isSameTeam() ? colorGreen(`Hooray! You guys are on the same team!`) : colorRed(`You guys are NOT on the same team.`);
         globalSession.channel.send(text);
-        globalSession.channel.send(partingText);
         globalSession = new Session(false, {}, 0, client.channels.cache.get(channelID), channelID);
     }
 
     // Start game
     if (sanitizedInput.startsWith("!start") && messageType === 'text' && !globalSession.isActive && playerNum) {
         const newGameText = `STARTING NEW GAME WITH ${playerNum} PLAYERS`;
-        const instructText = `Click here -> <@${client.user.id}> and privately message your role as \`good\` or \`bad\`.`;
+        const instructText = `Click here -> <@${client.user.id}> and privately message your role as \`good\`, \`bad\`, or \`none\`.`;
         globalSession = new Session(true, {}, playerNum, client.channels.cache.get(channelID), channelID);
         globalSession.channel.send(colorBlue(newGameText));
         globalSession.channel.send(instructText);
-
     }
 
     // During game
-    else if (globalSession.isActive && messageType === 'dm' && (sanitizedInput === 'good' || sanitizedInput === 'bad')) {
+    else if (globalSession.isActive && messageType === 'dm' && (sanitizedInput === 'good' || sanitizedInput === 'bad' || sanitizedInput === 'none')) {
         globalSession.playerVotes[author] = sanitizedInput;
         const submittedText = `${author} submitted their role! Waiting on ${globalSession.playersLeft()} more entries.`;
         globalSession.channel.send(colorYellow(submittedText));
@@ -77,7 +74,7 @@ client.on("message", msg => {
 
     // Display help message
     else if (sanitizedInput === "!anon help" && messageType === 'text') {
-        const text = colorYellow("Begin session: !start {playerAmount}\nex: !start 4\nThis begins the session with 4 players.");
+        const text = colorYellow("!start {playerAmount}\nThis begins a new session\nex: !start 4\nThis begins the session with 4 players.");
         client.channels.cache.get(channelID).send(text);
     }
 
