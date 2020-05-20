@@ -3,11 +3,12 @@ const Discord = require("discord.js")
 const client = new Discord.Client()
 
 
-function Session(isActive, playerVotes = {}, playerNum = 0, channel = null) {
+function Session(isActive, playerVotes = {}, playerNum = 0, channel = null, channelID = '') {
     this.playerVotes = playerVotes;
     this.isActive = isActive;
     this.playerNum = playerNum;
     this.channel = channel;
+    this.channelID = channelID;
 
     this.playersLeft = function () {
         return this.playerNum - Object.keys(playerVotes).length;
@@ -41,14 +42,14 @@ client.on("message", msg => {
         const partingText = "Contact <@396131916098568192> or visit https://github.com/nad0m/agent-anon for more bot details and features.";
         globalSession.channel.send(text);
         globalSession.channel.send(partingText);
-        globalSession = new Session(false, {}, 0, client.channels.cache.get(channelID));
+        globalSession = new Session(false, {}, 0, client.channels.cache.get(channelID), channelID);
     }
 
     // Start game
     if (sanitizedInput.startsWith("!start") && messageType === 'text' && !globalSession.isActive && playerNum) {
         const newGameText = `STARTING NEW GAME WITH ${playerNum} PLAYERS`;
         const instructText = `Click here -> <@${client.user.id}> and privately message your role as \`good\` or \`bad\`.`;
-        globalSession = new Session(true, {}, playerNum, client.channels.cache.get(channelID));
+        globalSession = new Session(true, {}, playerNum, client.channels.cache.get(channelID), channelID);
         globalSession.channel.send(colorBlue(newGameText));
         globalSession.channel.send(instructText);
 
@@ -59,7 +60,7 @@ client.on("message", msg => {
         globalSession.playerVotes[author] = sanitizedInput;
         const submittedText = `${author} submitted their role! Waiting on ${globalSession.playersLeft()} more entries.`;
         globalSession.channel.send(colorYellow(submittedText));
-        msg.reply(`Thanks for submitting your role! Navigate back to your channel <#${channelID}> to see the results.`);
+        msg.reply(`Thanks for submitting your role! Navigate back to your channel <#${globalSession.channelID}> to see the results.`);
 
         if (globalSession.playersLeft() === 0) {
             finalizeGame();
@@ -71,7 +72,7 @@ client.on("message", msg => {
         if (globalSession.channel && globalSession.isActive) {
             globalSession.channel.send("Current session erased. Type !start `# of players` in channel to start new session.");
         }
-        globalSession = new Session(false, {}, 0, client.channels.cache.get(channelID));
+        globalSession = new Session(false, {}, 0, client.channels.cache.get(channelID), channelID);
     }
 
     // Display help message
