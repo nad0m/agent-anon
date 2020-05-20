@@ -59,7 +59,7 @@ client.on("message", msg => {
         globalSession.playerVotes[author] = sanitizedInput;
         const submittedText = `${author} submitted their role! Waiting on ${globalSession.playersLeft()} more entries.`;
         globalSession.channel.send(colorYellow(submittedText));
-        msg.reply("Thanks for submitting your role! Navigate back to your channel to see the results.");
+        msg.reply(`Thanks for submitting your role! Navigate back to your channel <#${channelID}> to see the results.`);
 
         if (globalSession.playersLeft() === 0) {
             finalizeGame();
